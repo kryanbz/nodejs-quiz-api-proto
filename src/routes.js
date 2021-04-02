@@ -7,7 +7,9 @@ const Question = require('./models/Question') // includes our model
 router.get('/questions', async (req, res) => {
     try {
         const questions = await Question.find()
+        
         return res.status(200).json(questions)
+    
     } catch (error) {
         return res.status(500).json({"error":error})
     }
@@ -32,12 +34,15 @@ router.get('/questions/:id', async (req, res) => {
 // create one quiz question
 router.post('/questions', async (req, res) => {
     try {
-        const { description } = req.body
-        const { alternatives } = req.body
+       const { response_code } = req.body
+        const { results } = req.body
+       
 
         const question = await Question.create({
-            description,
-            alternatives
+            
+            response_code,
+            results
+
         })
 
         return res.status(201).json(question)
@@ -50,19 +55,20 @@ router.post('/questions', async (req, res) => {
 router.put('/questions/:id', async (req, res) => {
     try {
         const _id = req.params.id 
-        const { description, alternatives } = req.body
+        const { response_code, alternatives } = req.body
 
         let question = await Question.findOne({_id})
 
         if(!question){
             question = await Question.create({
-                description,
-                alternatives
+                
+               response_code,
+                results
             })    
             return res.status(201).json(question)
         }else{
-            question.description = description
-            question.alternatives = alternatives
+            
+            question.results = results
             await question.save()
             return res.status(200).json(question)
         }
